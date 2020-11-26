@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+
+body {
+	margin: 0;
+	background: #ffc0cb;
+}
+
+.all {
+	width:	800px;
+	margin: auto;
+	box-sizing: border-box;
+}
+
+
+.title {
+	width: 700px;
+	margin: auto;
+	font-family: "Lucida Console";
+	margin-top: 100px;
+	padding: 0 20px;
+	font-size: 70px;
+	font-weight: bold;
+	color: #EBEBEB;
+	box-sizing: border-box;
+}
+
+.search-space{
+	width: 95%;
+	padding: 15px;
+	border-radius: 20px;
+	margin: 0 auto;
+	box-sizing: border-box;
+}
+
+.bartosearch {
+	width: 300px;
+	border-radius: 0px;
+	box-sizing: border-box;
+	border: 0;
+	padding: 10px 15px;
+	font-size: 20px;
+	color: #444;
+}
+
+.button {
+	font-family: "Times New Roman";
+	font-weight: bold;
+	background: #EBEBEB;
+	box-sizing: border-box;
+	border-radius:0px;
+	display: inline-block;
+	width: 90px;
+	padding: 15px;
+	margin: 0px 10px;
+	font-size: 15px;
+
+}
+
+.results {
+	height: 600px;
+	overflow: auto;
+	width: 76%;
+	margin: 40px auto 0 auto;
+
+}
+.button:active{
+	background: #B8B8B8;
+}
+
+
+.button:hover{
+	background: #DADADA;
+}
+
+
+</style>
+
+
+<head>
+	<title>Diccionario de tweets</title>
+</head>
+
+<body>
+	<div class="all">
+		<div id="title" class="title">
+			Diccionario de tweets
+		</div>
+
+		<div class="search-space">
+			<input id="bartosearch" class="bartosearch" placeholder="Palabra a buscar...">
+			<div class="button" onclick="search()">Search</div>
+		</div>
+
+		<div id="results" class="results">
+		</div>
+	</div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script>
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	function search() {
+		var csrftoken = getCookie('csrftoken');
+		request_data = {
+			'searchTerms': document.getElementById("bartosearch").value,
+			'csrfmiddlewaretoken': csrftoken
+		}
+
+		$.post("search", request_data)
+		.done(function(data) {
+			title = document.getElementById("title");
+			title.style.margin = "10px auto 0 auto"
+			results = document.getElementById("results");
+			results.innerHTML = "";
+
+			for (tweet of data['tweets']) {
+				twttr.widgets.createTweet(tweet, results);
+			}
+		});
+	}
+</script>
+
+</html>
